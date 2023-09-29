@@ -19,8 +19,8 @@
   <body>
     <h1 style="text-align: center">International Space Station Locator</h1>
     <p style="font-size: x-large">
-      latitude: <span id="lat"></span><br />
-      longitude: <span id="lon"></span>
+      Latitude: <span id="lat"></span>°<br />
+      Longitude: <span id="lon"></span>°
     </p>
 
     <div id="issMap" style="height: 300px"></div>
@@ -45,6 +45,9 @@
       const marker = L.marker([0, 0], { icon: issIcon }).addTo(map);
 
       const api_url = "https://api.wheretheiss.at/v1/satellites/25544";
+
+      let firstTime = true;
+
       async function getISS() {
         const response = await fetch(api_url);
         const data = await response.json();
@@ -52,12 +55,16 @@
         const { latitude, longitude } = data;
 
         marker.setLatLng([latitude, longitude]);
+        if (firstTime) {
+          map.setView([latitude, longitude], 3);
+          firstTime = false;
+        }
 
-        document.getElementById("lat").textContent = latitude;
-        document.getElementById("lon").textContent = longitude;
+        document.getElementById("lat").textContent = latitude.toFixed(2);
+        document.getElementById("lon").textContent = longitude.toFixed(2);
       }
 
-      getISS();
+      setInterval(getISS, 1000);
     </script>
   </body>
 </html>
